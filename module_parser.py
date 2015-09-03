@@ -24,6 +24,7 @@ class ShowdownBot:
 		self.symbol = symbol
 		self.base_url = "http://play.pokemonshowdown.com/action.php"
 		
+		self.current_room = ""
 	def owner(self):
 		return self.owner
 
@@ -48,6 +49,7 @@ class ShowdownBot:
 	def parse_and_send_command(self, message):
 		user = message[3]
 		room = message[0]
+		self.current_room = room
 		content = message[4]
 		if not self.debug: print "Received: {}".format(content)
 		mod = self.moderator.parse(user,content,room)
@@ -68,20 +70,25 @@ class ShowdownBot:
 						self.commands.eightball(arguments,user,room)
 					else:
 						getattr(self.commands, command, None)(arguments,user,room)
-			except TypeError:
+			except TypeError, e:
+				print repr(e)
 				self.send("Invalid command.",room)
 
 
 
 
 	
-	def send(self, message, room):
+	def send(self, message, room=None):
+		""" Default to the room the last message came from. """
+		if not room:
+			room = self.current_room #Shitty practice, but it works.
 		if not self.debug:
 			self.ws.send("%s|%s" % (room, message))
 			print("%s|%s" % (room, message))
 		else: print("O>>" + message)
 	
 	def parse_challenge(self,message):
+		""" Get away from this garbage """
 		self.challenges = json.loads(message[2])
 		for item in self.challenges["challengesFrom"]:
 			self.send("/accept {}".format(item),"")
@@ -93,7 +100,7 @@ class ShowdownBot:
 		print "Connection established."
 		while True:
 			if not self.debug:
-				#message_raw = self.ws.recv()
+				#message_raw = self.ws.recv() dont touch this, it breaks stuff
 				message = str(self.ws.recv()).replace("\n", '').replace(">",'')
 				message = str(message).split('|')
 				print "|".join(message) + "\n"
@@ -108,8 +115,8 @@ class ShowdownBot:
 					elif message[1] == 'c:':
 						print(message)
 						self.parse_and_send_command(message)
-					elif message[1] == 'updatechallenges':
-						self.parse_challenge(message)
+					#elif message[1] == 'updatechallenges': TO-DO
+					#	self.parse_challenge(message)
 				
 						
 			else:
