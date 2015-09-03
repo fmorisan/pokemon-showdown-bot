@@ -7,6 +7,7 @@ class Commands:
 	def __init__(self,bot,mod):
 		self.bot = bot
 		self.mod = mod
+		#Used in the 8ball command
 		self.eightball_strings = [
 		"No.",
 		"Yes.",
@@ -18,7 +19,16 @@ class Commands:
 		"Concentrate and try again.",
 		"Absolutely." 
 		]
-		
+		# Do .format(bot.symbol) when printing these. Used in the help command.
+		self.help_strings = {
+		"test":"Just a simple test command. Syntax: {}test",
+		"pick":"Pick between options. Syntax: {}pick [option1] [option2].. etc, supports unlimited options.",
+		"toggle":"Moderation command, allows toggling automoderation options. Syntax: {}toggle (caps/flood/rant)",
+		"8ball/eightball":"Simple 8ball command. Syntax: {}8ball/eightball",
+		"cointoss":"Tosses a coin, lands either heads or tails. Syntax: {}cointoss",
+		"echo":"Repeats the arguments, moderator only. Syntax: {}echo [whatever]",
+		"help":"This help message. Syntax: {}help [command]"
+		}
 	def test(self, args, user ,room):
 		self.bot.send('Yes, you are pregnant.',room)
 		
@@ -71,3 +81,17 @@ class Commands:
 			self.bot.send(" ".join(args),room)
 		else:
 			self.bot.send("You are not authorized to use this command.",room)
+			
+	def help(self,args,user,room):
+		""" Display help about commands to the user. """
+		if args != "":
+			if hasattr(self,args[0]):
+				try:
+					self.bot.send(self.help_strings[args[0]].format(self.bot.symbol),room)
+				except:
+					self.bot.send("Something went wrong, you might want to report this.",room)
+			else:
+				self.bot.send("{} command not found.".format(args[0]),room)
+		else:
+			self.bot.send(self.help_strings["help"].format(self.bot.symbol))
+		
