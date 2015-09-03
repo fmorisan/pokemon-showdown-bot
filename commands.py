@@ -20,12 +20,14 @@ class Commands:
 		]
 		
 	def test(self, args, user ,room):
-		self.bot.send('Yes, you are pregnant.',room)	
+		self.bot.send('Yes, you are pregnant.',room)
+		
 	def pick(self, args, user, room):
 		if args:
 			self.bot.send(str(args[random.randint(0,len(args)-1)]),room)
 		else:
-			self.bot.send("Error, not enough arguments.",room)		
+			self.bot.send("Error, not enough arguments.",room)	
+			
 	def toggle(self, args, user, room):
 		user = self.mod.userCreate(user,room)
 		if user.auth_level < 3 and not self.bot.debug:
@@ -52,14 +54,17 @@ class Commands:
 				else:
 					self.mod.capControl_state = True
 					self.bot.send("Caps control is now on.",room)
+					
 	def eightball(self, args, user, room):
 		self.bot.send(str(self.eightball_strings[random.randint(0,len(self.eightball_strings)-1)]),room)
+	
 	def cointoss(self,args, user, room):
 		t = random.randint(0,1)
 		if t == 1:
 			self.bot.send("The coin landed on Tails.",room)
 		else:
 			self.bot.send("The coin landed on Heads.",room)
+	
 	def echo(self,args, user, room):
 		user = self.mod.userCreate(user,room)
 		if user.auth_level > 1:

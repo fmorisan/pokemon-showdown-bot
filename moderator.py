@@ -17,16 +17,15 @@ class Moderator:
 	
 	def __init__(self,debug):
 		""" Initialize the Moderator instance with the stuff that we'll need. """
-		
-		self.messageList = []
-		self.userList = []
+	
+		self.message_list = []
+		self.user_list = []
 		
 		self.flood_reason = "You have offended the gods of flood control!"
 		self.caps_reason = "You have capitalized one too many letters.."
 		self.rant_reason = "Please don't talk to yourself." #Maybe load these from the cfg.
 		
 		self.last_message = None
-		
 		self.debug = debug
 		
 		self.rantControl_state = True
@@ -40,7 +39,7 @@ class Moderator:
 			
 		m = Message(user, message, room)
 		
-		self.messageList.append(m)
+		self.message_list.append(m)
 		user.sent_messages.append(m)
 		
 		
@@ -63,17 +62,17 @@ class Moderator:
 	def userCreate(self, user, room):
 		""" Retrieve an user object given their username, or create a new one """
 		
-		usernamelist = []
-		for item in self.userList:
-			usernamelist.append(item.name)
-		if user in usernamelist:
-			for item in self.userList:
+		temp_username_list = []
+		for item in self.user_list:
+			temp_username_list.append(item.name)
+		if user in temp_username_list:
+			for item in self.user_list:
 				if item.name == user:
 					user = item
 					#print "found user {}".format(user.name)
 		else:
 			user = User([room],user)
-			self.userList.append(user)
+			self.user_list.append(user)
 			#print "created user {}".format(user.name)
 		if room not in user.rooms:
 			user.rooms.append(room)
@@ -135,8 +134,6 @@ class Moderator:
 				print "Kicking {}".format(user.name)
 				user.last_kick = now
 				return "/kick {}, {}".format(user.name,reason)
-	
-
 		
 	def timeSince(self,then,now):
 		""" Get the time between two timestamps """
